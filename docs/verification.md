@@ -1,5 +1,7 @@
 # Verification — 27 October 2026
 
-Five Python tests pass locally; seven generated files reproduce exactly. Official42-position matrix/geometry references are hash-pinned to QMK180f394b489c238cb231c2bf8b080262155e03c0. The actual generated layer-state hook passed256state combinations under native ASan/UBSan against an explicit QMK API stand-in. No actual QMK runtime, USB, switches or split transport is inferred from that check.
+Six Python tests pass locally; seven generated files reproduce exactly. Official42-position matrix/geometry references are hash-pinned to QMK180f394b489c238cb231c2bf8b080262155e03c0. The actual generated layer-state hook passed256state combinations under native ASan/UBSan against an explicit QMK API stand-in. No actual QMK runtime, USB, switches or split transport is inferred from that check.
 
 Real pinned QMK AVR compilation runs separately on Linux CI and must pass before merge. No local Docker/QMK toolchain installation or flashing occurred. Desktop browser review checked BASE and ADJUST layer selection and the42-position diagram. A text table provides the same key actions. Narrow viewport remains unverified. Independent source review found no blocker, reran all five tests/exact generation/native256state check, and confirmed layer release, source pins and target assumptions. Actual AVR compilation remains the CI gate. Physical acceptance remains pending as listed in assembly.md.
+
+Initial Windows CI exposed an implicit locale decode for UTF-8 source artwork. Explicit UTF-8 reads now cover generator inputs/outputs. A regression runs generation with default-encoding warnings promoted to errors; it failed before the change and passed afterward. Firmware bytes are unchanged.

@@ -8,7 +8,7 @@ import tempfile
 ROOT=Path(__file__).resolve().parents[1]
 compiler=shutil.which('cc')
 if compiler is None:raise SystemExit('A native C compiler is required for this separate check.')
-keys=sorted({key for layer in json.loads((ROOT/'keymap.json').read_text())['layers'] for key in layer['keys'] if not key.startswith('MO(')})
+keys=sorted({key for layer in json.loads((ROOT/'keymap.json').read_text(encoding='utf-8'))['layers'] for key in layer['keys'] if not key.startswith('MO(')})
 with tempfile.TemporaryDirectory() as directory:
     temp=Path(directory)
     (temp/'mock_qmk.h').write_text('''#include <stdint.h>

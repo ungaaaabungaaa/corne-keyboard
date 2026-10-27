@@ -33,7 +33,7 @@ python3 -m unittest discover -s tests -v
 python3 tools/test_native.py
 ```
 
-The generator validates exact42-position layers and a limited keycode set before writing. Five tests check reference hashes, physical matrix uniqueness, code/bounds rejection, thumb fallthrough and exact output reproduction. The separate native C check compiles the actual generated tri-layer hook and tests256 state combinations under ASan/UBSan. It uses a small QMK API stand-in; it does not prove QMK USB or split operation. The real AVR build is a separate CI job.
+The generator validates exact42-position layers and a limited keycode set before writing. Six tests check reference hashes, physical matrix uniqueness, code/bounds rejection, thumb fallthrough and exact output reproduction and explicit cross-platform UTF-8 reads. The separate native C check compiles the actual generated tri-layer hook and tests256 state combinations under ASan/UBSan. It uses a small QMK API stand-in; it does not prove QMK USB or split operation. The real AVR build is a separate CI job.
 
 [Full SVG guide](docs/generated/layers.svg) · [Matrix positions](docs/generated/layout.json) · [Contract](docs/contract.md) · [Assembly and physical checks](docs/assembly.md).
 

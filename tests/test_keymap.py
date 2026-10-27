@@ -1,4 +1,5 @@
 import copy
+import os
 import json
 from pathlib import Path
 import subprocess
@@ -8,7 +9,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'tools'))
 import generate
 ROOT=Path(__file__).resolve().parents[1]
 class KeymapTests(unittest.TestCase):
-    def setUp(self):self.source=json.loads((ROOT/'keymap.json').read_text())
+    def setUp(self):self.source=json.loads((ROOT/'keymap.json').read_text(encoding='utf-8'))
     def test_all_layers_match_the_physical_matrix(self):
         data=generate.validate(self.source)
         self.assertEqual([len(layer['keys']) for layer in data['layers']],[42]*4)
@@ -33,4 +34,7 @@ class KeymapTests(unittest.TestCase):
     def test_official_reference_and_generation_are_exact(self):
         generate.layout()
         subprocess.run([sys.executable,str(ROOT/'tools/generate.py'),'--check'],check=True)
+    def test_generation_never_uses_platform_default_text_encoding(self):
+        env={**os.environ,'PYTHONWARNDEFAULTENCODING':'1','PYTHONWARNINGS':'error::EncodingWarning'}
+        subprocess.run([sys.executable,str(ROOT/'tools/generate.py'),'--check'],env=env,check=True)
 if __name__=='__main__':unittest.main()

@@ -19,15 +19,15 @@ def validate(data):
  return data
 
 def layout():
- pins=json.loads((ROOT/'references/UPSTREAM.json').read_text())
+ pins=json.loads((ROOT/'references/UPSTREAM.json').read_text(encoding='utf-8'))
  for name,digest in pins['files'].items():
   if hashlib.sha256((ROOT/name).read_bytes()).hexdigest()!=digest:raise ValueError('Pinned upstream reference changed.')
- keys=json.loads((ROOT/'references/qmk-crkbd-info.json').read_text())['layouts']['LAYOUT_split_3x6_3']['layout']
+ keys=json.loads((ROOT/'references/qmk-crkbd-info.json').read_text(encoding='utf-8'))['layouts']['LAYOUT_split_3x6_3']['layout']
  if len(keys)!=42 or len({tuple(key['matrix']) for key in keys})!=42:raise ValueError('Official layout is not the expected 42-position matrix.')
  return keys
 
 def artifacts():
- data=validate(json.loads((ROOT/'keymap.json').read_text()));positions=layout()
+ data=validate(json.loads((ROOT/'keymap.json').read_text(encoding='utf-8')));positions=layout()
  c='// SPDX-License-Identifier: GPL-2.0-or-later\n// Generated from keymap.json. Edit that source, then run tools/generate.py.\n#include QMK_KEYBOARD_H\nenum layers { BASE, NAV, SYMBOL, ADJUST };\nconst uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {\n'
  for layer in data['layers']:
   c+='    ['+layer['name']+'] = LAYOUT_split_3x6_3(\n'
@@ -42,7 +42,7 @@ def artifacts():
    svg.append(f'<rect class="key" x="{x}" y="{y}" width="68" height="52" rx="4"/><text x="{x+34}" y="{y+30}" text-anchor="middle" font-size="12">{html.escape(label)}</text>')
  svg.append('<text x="35" y="1510" font-size="14">Hold NAV + SYMBOL for ADJUST. Guide only; physical keyboard tests remain pending.</text></svg>')
  rendered={'firmware/keymap.c':c,'docs/generated/layers.svg':''.join(svg)+'\n','docs/generated/layout.json':json.dumps({'keyboard':data['keyboard'],'positions':positions},indent=2)+'\n','site/keymap.json':json.dumps({**data,'positions':positions},indent=2)+'\n'}
- for name in ['index.html','style.css','app.js']:rendered['site/'+name]=(ROOT/'web'/name).read_text()
+ for name in ['index.html','style.css','app.js']:rendered['site/'+name]=(ROOT/'web'/name).read_text(encoding='utf-8')
  return rendered
 
 def main():
@@ -51,7 +51,7 @@ def main():
   output=artifacts()
   if args.check:
    for name,value in output.items():
-    if (ROOT/name).read_text()!=value:raise ValueError('Generated artifact differs: '+name)
+    if (ROOT/name).read_text(encoding='utf-8')!=value:raise ValueError('Generated artifact differs: '+name)
    print(f'{len(output)} generated artifacts match exactly.')
   else:
    for name,value in output.items():(ROOT/name).write_text(value,encoding='utf-8',newline='\n')
