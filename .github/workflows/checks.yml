@@ -1,0 +1,40 @@
+name: Verify Corne keymap
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  artifacts:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m unittest discover -s tests -v
+      - run: python tools/generate.py --check
+  firmware:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 tools/test_native.py
+      - uses: actions/checkout@v4
+        with:
+          repository: qmk/qmk_firmware
+          ref: 180f394b489c238cb231c2bf8b080262155e03c0
+          submodules: recursive
+          path: upstream
+          persist-credentials: false
+      - name: Actual pinned QMK AVR compile, no USB access
+        run: |
+          mkdir -p upstream/keyboards/crkbd/keymaps/qeth
+          cp firmware/keymap.c firmware/rules.mk firmware/config.h upstream/keyboards/crkbd/keymaps/qeth/
+          docker run --rm -v "$PWD/upstream:/qmk_firmware" -w /qmk_firmware ghcr.io/qmk/qmk_cli@sha256:b7d7fa8fb4432b569931de5ad59098cb788f440ed61a62c5126746b71aee0f4a make crkbd/rev1:qeth
+          test -s upstream/crkbd_rev1_qeth.hex
+          sha256sum upstream/crkbd_rev1_qeth.hex
+      - uses: actions/upload-artifact@v4
+        with:
+          name: corne-rev1-qeth-hex
+          path: upstream/crkbd_rev1_qeth.hex
