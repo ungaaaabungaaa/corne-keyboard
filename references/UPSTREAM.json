@@ -1,0 +1,11 @@
+{
+  "upstream": "https://github.com/qmk/qmk_firmware",
+  "revision": "180f394b489c238cb231c2bf8b080262155e03c0",
+  "license": "GPL-2.0-or-later",
+  "files": {
+    "references/qmk-crkbd-info.json": "f958e6ac9c1f9e1343c3f0e9b90a524123ee2d486a057487b7fd694c5c296b40",
+    "references/qmk-rev1-keyboard.json": "868fc8e87f12236ab2e90ab5f2a29a6c4c88a366989d5b3cf8ecf701b59950af",
+    "LICENSE": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643"
+  },
+  "toolchain_image": "ghcr.io/qmk/qmk_cli@sha256:b7d7fa8fb4432b569931de5ad59098cb788f440ed61a62c5126746b71aee0f4a"
+}
