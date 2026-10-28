@@ -39,7 +39,7 @@ The generator validates exact42-position layers and a limited keycode set before
 
 ## Real firmware build
 
-The workflow checks out official QMK at `180f394b489c238cb231c2bf8b080262155e03c0`, copies this project's keymap/rules/config, and runs `make crkbd/rev1:qeth` in the digest-pinned official QMK container. It uploads the resulting HEX as a workflow artifact. There is no privileged container, USB mount or flash command. See the current [checks](https://github.com/ungaaaabungaaa/corne-keyboard/actions) before using an artifact.
+The workflow checks out official QMK at `180f394b489c238cb231c2bf8b080262155e03c0`, copies this project's keymap/rules/config, and runs `make crkbd/rev1:qeth` in the digest-pinned official QMK container. It uploads the resulting HEX and its SHA-256 receipt as one workflow artifact. After extracting both files into the same directory, run `python3 tools/checksum.py /path/to/crkbd_rev1_qeth.hex --check` to detect a changed or incomplete download. A checksum confirms byte integrity; it does not establish hardware compatibility. There is no privileged container, USB mount or flash command. See the current [checks](https://github.com/ungaaaabungaaa/corne-keyboard/actions) before using an artifact.
 
 The full toolchain is kept off the development Mac. If you already have a QMK checkout and supported toolchain, put the three `firmware/` files in `keyboards/crkbd/keymaps/qeth/` and compile that target. Read the [official QMK compile guide](https://docs.qmk.fm/cli_commands) and [Docker guide](https://docs.qmk.fm/getting_started_docker) for the wider environment. Compilation is not flashing.
 
