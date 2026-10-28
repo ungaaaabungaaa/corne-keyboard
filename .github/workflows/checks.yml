@@ -35,6 +35,22 @@ jobs:
           test -s upstream/crkbd_rev1_qeth.hex
           python3 tools/checksum.py upstream/crkbd_rev1_qeth.hex
           python3 tools/checksum.py upstream/crkbd_rev1_qeth.hex --check
+      - name: Compile optional Colemak variant with the same pinned toolchain
+        run: |
+          python3 tools/generate.py --variant colemak --out /tmp/corne-colemak
+          python3 tools/generate.py --variant colemak --out /tmp/corne-colemak --check
+          mkdir -p upstream/keyboards/crkbd/keymaps/qeth_colemak
+          cp /tmp/corne-colemak/firmware/* upstream/keyboards/crkbd/keymaps/qeth_colemak/
+          docker run --rm -v "$PWD/upstream:/qmk_firmware" -w /qmk_firmware ghcr.io/qmk/qmk_cli@sha256:b7d7fa8fb4432b569931de5ad59098cb788f440ed61a62c5126746b71aee0f4a make crkbd/rev1:qeth_colemak
+          test -s upstream/crkbd_rev1_qeth_colemak.hex
+          python3 tools/checksum.py upstream/crkbd_rev1_qeth_colemak.hex
+          python3 tools/checksum.py upstream/crkbd_rev1_qeth_colemak.hex --check
+      - uses: actions/upload-artifact@v4
+        with:
+          name: corne-rev1-qeth-colemak-hex
+          path: |
+            upstream/crkbd_rev1_qeth_colemak.hex
+            upstream/crkbd_rev1_qeth_colemak.hex.sha256
       - uses: actions/upload-artifact@v4
         with:
           name: corne-rev1-qeth-hex

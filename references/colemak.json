@@ -1,0 +1,12 @@
+{
+  "url": "https://colemak.com/pub/unix/colemak-1.0.tar.gz",
+  "sha256": "33160f7ed44746e6da9760db7dcc80816900ba9f9ffd2cf32dd4e84f563ab496",
+  "member": "colemak-1.0/xmodmap/xmodmap.colemak",
+  "attribution": "Shai Coleman, 2006-01-01; source file explicitly marked Public domain.",
+  "scope": "Basic standard US Colemak letter and semicolon positions only; no international AltGr or Caps Lock remap.",
+  "rows": [
+    "Q W F P G J L U Y ;",
+    "A R S T D H N E I O",
+    "Z X C V B K M , . /"
+  ]
+}
