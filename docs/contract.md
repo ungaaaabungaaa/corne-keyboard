@@ -7,3 +7,5 @@ Generator validates before writing; --check compares generated artifacts without
 Browser is a read-only layer guide from generated JSON. It labels physical positions and QMK actions; selecting a layer changes the displayed keycodes only. No remote API, HID access, keystroke capture, macros, downloads of personal data or firmware writes. Serve only generated site on loopback.
 
 Original artwork is not reused. New source GPL-2.0-or-later to match QMK integration; upstream hardware references keep their own licenses. Physical part fit, polarity, hot-swap option, controller orientation, soldering, bootloader and all42 switch/split/USB tests remain pending.
+
+Optional `--variant colemak --out NEW_DIR` exports nine files to a new destination only. It changes the 30 BASE letter/punctuation positions to the attributed standard Colemak arrangement, preserving the modifiers, layer thumbs and all overlays. `--check` compares that variant export without writes. The variant and output flags must be supplied together. Default generation/check remains unchanged. The exported config.h/rules.mk use the same wired controller assumptions as the default build.

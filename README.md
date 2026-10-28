@@ -37,6 +37,18 @@ The generator validates exact42-position layers and a limited keycode set before
 
 [Full SVG guide](docs/generated/layers.svg) · [Matrix positions](docs/generated/layout.json) · [Contract](docs/contract.md) · [Assembly and physical checks](docs/assembly.md).
 
+## Optional Colemak variant
+
+```sh
+python3 tools/generate.py --variant colemak --out my-colemak
+python3 tools/generate.py --variant colemak --out my-colemak --check
+python3 -m http.server 8799 --bind 127.0.0.1 --directory my-colemak/site
+```
+
+The destination must be new. Default QWERTY files stay unchanged. This variant maps the 30 main BASE positions to standard US Colemak letters/punctuation; modifiers, layer thumbs and all three overlays remain as configured in `keymap.json`. The reference is [Shai Coleman's public-domain Colemak mapping](https://colemak.com/Unix). This is a Corne adaptation of its basic letter arrangement; the reference's Caps Lock remap and international AltGr characters are not included. Use a matching US QWERTY host input layout to avoid applying a second letter remap.
+
+The export includes the generated C keymap, matching guides and unchanged controller configuration. CI separately compiles `crkbd/rev1:qeth_colemak` and uploads a distinct HEX/checksum artifact. Compilation is not physical typing or flashing evidence.
+
 ## Real firmware build
 
 The workflow checks out official QMK at `180f394b489c238cb231c2bf8b080262155e03c0`, copies this project's keymap/rules/config, and runs `make crkbd/rev1:qeth` in the digest-pinned official QMK container. It uploads the resulting HEX and its SHA-256 receipt as one workflow artifact. After extracting both files into the same directory, run `python3 tools/checksum.py /path/to/crkbd_rev1_qeth.hex --check` to detect a changed or incomplete download. A checksum confirms byte integrity; it does not establish hardware compatibility. There is no privileged container, USB mount or flash command. See the current [checks](https://github.com/ungaaaabungaaa/corne-keyboard/actions) before using an artifact.

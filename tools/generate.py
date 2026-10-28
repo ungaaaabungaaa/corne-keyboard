@@ -68,8 +68,18 @@ def layout():
     return keys
 
 
-def artifacts():
+def artifacts(variant=None):
     data = validate(json.loads((ROOT / "keymap.json").read_text(encoding="utf-8")))
+    if variant is not None:
+        if variant != "colemak":
+            raise ValueError("Unsupported keymap variant.")
+        for start, codes in [
+            (1, ["KC_" + key for key in "QWFPGJLUY"] + ["KC_SCLN"]),
+            (13, ["KC_" + key for key in "ARSTDHNEIO"]),
+            (25, ["KC_" + key for key in "ZXCVBKM"] + ["KC_COMM", "KC_DOT", "KC_SLSH"]),
+        ]:
+            data["layers"][0]["keys"][start : start + len(codes)] = codes
+        validate(data)
     positions = layout()
     c = "// SPDX-License-Identifier: GPL-2.0-or-later\n// Generated from keymap.json. Edit that source, then run tools/generate.py.\n#include QMK_KEYBOARD_H\nenum layers { BASE, NAV, SYMBOL, ADJUST };\nconst uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {\n"
     for layer in data["layers"]:
@@ -111,23 +121,43 @@ def artifacts():
     }
     for name in ["index.html", "style.css", "app.js"]:
         rendered["site/" + name] = (ROOT / "web" / name).read_text(encoding="utf-8")
+    if variant:
+        rendered["firmware/keymap.c"] = (
+            "// Optional Colemak variant; derived from keymap.json.\n"
+            + rendered["firmware/keymap.c"]
+        )
+        rendered["site/app.js"] = rendered["site/app.js"].replace(
+            "QWERTY letters", "Colemak letters"
+        )
+        for name in ["config.h", "rules.mk"]:
+            rendered["firmware/" + name] = (ROOT / "firmware" / name).read_text(
+                encoding="utf-8"
+            )
     return rendered
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
+    parser.add_argument("--variant", choices=["colemak"])
+    parser.add_argument("--out", type=Path)
     args = parser.parse_args()
+    if bool(args.variant) != bool(args.out):
+        parser.error("--variant and --out are required together; default artifacts stay unchanged.")
     try:
-        output = artifacts()
+        output = artifacts(args.variant)
+        destination = args.out if args.out else ROOT
         if args.check:
             for name, value in output.items():
-                if (ROOT / name).read_text(encoding="utf-8") != value:
+                if (destination / name).read_text(encoding="utf-8") != value:
                     raise ValueError("Generated artifact differs: " + name)
             print(f"{len(output)} generated artifacts match exactly.")
         else:
+            if args.out:
+                destination.mkdir()
             for name, value in output.items():
-                (ROOT / name).write_text(value, encoding="utf-8", newline="\n")
+                (destination / name).parent.mkdir(parents=True, exist_ok=True)
+                (destination / name).write_text(value, encoding="utf-8", newline="\n")
             print(
                 f"Generated {len(output)} artifacts. No board was connected or flashed."
             )
