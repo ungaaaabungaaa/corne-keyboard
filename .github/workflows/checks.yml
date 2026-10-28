@@ -33,8 +33,11 @@ jobs:
           cp firmware/keymap.c firmware/rules.mk firmware/config.h upstream/keyboards/crkbd/keymaps/qeth/
           docker run --rm -v "$PWD/upstream:/qmk_firmware" -w /qmk_firmware ghcr.io/qmk/qmk_cli@sha256:b7d7fa8fb4432b569931de5ad59098cb788f440ed61a62c5126746b71aee0f4a make crkbd/rev1:qeth
           test -s upstream/crkbd_rev1_qeth.hex
-          sha256sum upstream/crkbd_rev1_qeth.hex
+          python3 tools/checksum.py upstream/crkbd_rev1_qeth.hex
+          python3 tools/checksum.py upstream/crkbd_rev1_qeth.hex --check
       - uses: actions/upload-artifact@v4
         with:
           name: corne-rev1-qeth-hex
-          path: upstream/crkbd_rev1_qeth.hex
+          path: |
+            upstream/crkbd_rev1_qeth.hex
+            upstream/crkbd_rev1_qeth.hex.sha256
