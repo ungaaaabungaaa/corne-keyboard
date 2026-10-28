@@ -51,6 +51,6 @@ class ChecksumTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "empty"):
                 module.checksum(image)
             unsafe = Path(directory) / "bad\nname.hex"
-            unsafe.write_bytes(b"x")
+            # Rejection occurs before I/O; Windows cannot create this name.
             with self.assertRaisesRegex(ValueError, "name"):
                 module.checksum(unsafe)
